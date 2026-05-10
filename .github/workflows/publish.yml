@@ -1,0 +1,80 @@
+name: Publish to npm with provenance
+
+on:
+  push:
+    tags:
+      # Matches tags like n8n-nodes-teckel-ipfs@1.0.5
+      - 'n8n-nodes-teckel-*@*'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package directory (n8n-nodes-teckel-ipfs / -ethereum / -navigation)'
+        required: true
+        type: choice
+        options:
+          - n8n-nodes-teckel-ipfs
+          - n8n-nodes-teckel-ethereum
+          - n8n-nodes-teckel-navigation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write          # required for npm provenance attestation
+    steps:
+      - name: Checkout repo at tag
+        uses: actions/checkout@v4
+
+      - name: Resolve package name and version
+        id: pkg
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PKG="${{ github.event.inputs.package }}"
+            VERSION=$(node -p "require('./${PKG}/package.json').version")
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            PKG="${TAG%@*}"
+            VERSION="${TAG##*@}"
+          fi
+          echo "name=$PKG"     >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing $PKG @ $VERSION"
+
+      - name: Setup Node 20 with npm registry auth
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Verify tag version matches package.json
+        if: github.event_name == 'push'
+        working-directory: ${{ steps.pkg.outputs.name }}
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PKG_VERSION" != "${{ steps.pkg.outputs.version }}" ]; then
+            echo "::error::Tag version ${{ steps.pkg.outputs.version }} does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        working-directory: ${{ steps.pkg.outputs.name }}
+        run: npm install --ignore-scripts
+
+      - name: Build
+        working-directory: ${{ steps.pkg.outputs.name }}
+        run: npm run build
+
+      - name: Publish with provenance
+        working-directory: ${{ steps.pkg.outputs.name }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "### Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**${{ steps.pkg.outputs.name }}@${{ steps.pkg.outputs.version }}** published with provenance." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "https://www.npmjs.com/package/${{ steps.pkg.outputs.name }}/v/${{ steps.pkg.outputs.version }}" >> $GITHUB_STEP_SUMMARY
