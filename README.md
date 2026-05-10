@@ -29,7 +29,17 @@ Each package defines its own credential type, but all share the same two fields:
 | API Key | Your teckel API key |
 | Base URL | teckel API gateway URL (default: `https://mcp-servers.bh.tkllabs.io:9780`) |
 
-Get an API key at [teckel.io](https://teckel.io).
+### How to obtain your teckel API Key
+
+#### First, download and install the teckel App.
+
+[<img width="120" height="40" alt="Download on the App Store" src="https://github.com/user-attachments/assets/ecbe6c7a-02c9-4212-b2ab-58dd90c91bca" />](https://apps.apple.com/gb/app/teckel/id6746805799)
+[<img width="135" height="45" alt="Get it on Google Play" src="https://github.com/user-attachments/assets/9f9b8443-d759-41c1-9fce-399dc690b439" />](https://play.google.com/store/apps/details?id=io.teckel.app)
+
+#### Next, generate an API key using the teckel App.
+
+1. Navigate to the Accounts page by tapping on the wallet icon in the upper right corner of the App home screen. Access the API Key Manager for the created or imported Ethereum Account by tapping **Manage API Key** on the Accounts page.
+2. Enter the API key in the n8n credentials edit box.
 
 ## Repo layout
 
