@@ -1,0 +1,57 @@
+{
+  "name": "n8n-nodes-teckel-navigation",
+  "version": "1.0.2",
+  "description": "Aviation weather, flight routing, geocoding and navigation tools via the teckel platform.",
+  "keywords": [
+    "n8n-community-node-package",
+    "navigation",
+    "aviation",
+    "metar",
+    "flight-planning",
+    "geocoding",
+    "weather",
+    "airports"
+  ],
+  "license": "MIT",
+  "author": "teckel-io",
+  "homepage": "https://github.com/teckel-io/n8n-nodes/tree/main/n8n-nodes-teckel-navigation#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teckel-io/n8n-nodes.git",
+    "directory": "n8n-nodes-teckel-navigation"
+  },
+  "bugs": {
+    "url": "https://github.com/teckel-io/n8n-nodes/issues"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc && node scripts/copy-assets.js",
+    "dev": "tsc --watch"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/TeckelNavigationApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/TeckelNavigation/TeckelNavigation.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "n8n-workflow": "^1.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "^1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "n8n-workflow": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,9 @@
+credentials/**/*.ts
+nodes/
+scripts/
+tsconfig.json
+*.map
+deploy.ps1
+publish.ps1
+*.txt
+teckel1.svg
