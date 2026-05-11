@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-teckel-ipfs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Store, retrieve and pin encrypted files on IPFS via the teckel platform.",
   "keywords": [
     "n8n-community-node-package",
