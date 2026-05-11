@@ -3,6 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	NodeConnectionTypes,
 	NodeOperationError,
 	IDataObject,
 } from 'n8n-workflow';
@@ -72,8 +73,9 @@ export class TeckelNavigation implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Aviation weather, flight routing, geocoding and navigation tools via the teckel platform',
 		defaults: { name: 'teckel Navigation' },
-		inputs: ['main'],
-		outputs: ['main'],
+		usableAsTool: true,
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'teckelNavigationApi', required: true }],
 		properties: [
 
@@ -87,34 +89,34 @@ export class TeckelNavigation implements INodeType {
 				options: [
 					{ name: 'Airport Search by Coordinates', value: 'airportSearchCoords', description: 'Search for airports within range of coordinates', action: 'Airport search by coordinates' },
 					{ name: 'Airport Search by Name/Code', value: 'airportSearch', description: 'Search for airports by name, ICAO, IATA or alternate ID', action: 'Airport search by name or code' },
-					{ name: 'Airport Search from Place', value: 'airportSearchPlace', description: 'Search for airports within range of a place', action: 'Airport search from place' },
-					{ name: 'Airports within Range (Coords)', value: 'getAirportsForCoordsRange', description: 'Get airports within range of coordinates', action: 'Airports within range coords' },
-					{ name: 'Driving Distance between Coords', value: 'drivingDistanceBetweenCoords', description: 'Get driving distance and time between two coordinate pairs', action: 'Driving distance between coords' },
-					{ name: 'Driving Distance between Places', value: 'drivingDistanceBetweenPlaces', description: 'Get driving distance and time between two places', action: 'Driving distance between places' },
-					{ name: 'Features within Range (Coords)', value: 'getFeaturesForCoordsRange', description: 'Get aviation features within range of coordinates (US only)', action: 'Features within range coords' },
-					{ name: 'Fixes within Range (Coords)', value: 'getFixesForCoordsRange', description: 'Get aviation fixes/waypoints within range of coordinates (US only)', action: 'Fixes within range coords' },
-					{ name: 'Flight Distance between Coords', value: 'flightDistanceBetweenCoords', description: 'Get great-circle/rhumbline distance and track between two coordinate pairs', action: 'Flight distance between coords' },
-					{ name: 'Flight Distance between Places', value: 'flightDistanceBetweenPlaces', description: 'Get great-circle/rhumbline distance and track between two places', action: 'Flight distance between places' },
+					{ name: 'Airport Search From Place', value: 'airportSearchPlace', description: 'Search for airports within range of a place', action: 'Airport search from place' },
+					{ name: 'Airports Within Range (Coords)', value: 'getAirportsForCoordsRange', description: 'Get airports within range of coordinates', action: 'Airports within range coords' },
+					{ name: 'Driving Distance Between Coords', value: 'drivingDistanceBetweenCoords', description: 'Get driving distance and time between two coordinate pairs', action: 'Driving distance between coords' },
+					{ name: 'Driving Distance Between Places', value: 'drivingDistanceBetweenPlaces', description: 'Get driving distance and time between two places', action: 'Driving distance between places' },
+					{ name: 'Features Within Range (Coords)', value: 'getFeaturesForCoordsRange', description: 'Get aviation features within range of coordinates (US only)', action: 'Features within range coords' },
+					{ name: 'Fixes Within Range (Coords)', value: 'getFixesForCoordsRange', description: 'Get aviation fixes/waypoints within range of coordinates (US only)', action: 'Fixes within range coords' },
+					{ name: 'Flight Distance Between Coords', value: 'flightDistanceBetweenCoords', description: 'Get great-circle/rhumbline distance and track between two coordinate pairs', action: 'Flight distance between coords' },
+					{ name: 'Flight Distance Between Places', value: 'flightDistanceBetweenPlaces', description: 'Get great-circle/rhumbline distance and track between two places', action: 'Flight distance between places' },
 					{ name: 'Flight Route Calculations', value: 'flightRouteCalculations', description: 'Full VFR flight route calculation with weather, wind correction and navlog', action: 'Flight route calculations' },
 					{ name: 'Geocode Search', value: 'geocodeSearch', description: 'Get geographical coordinates for any location', action: 'Geocode search' },
 					{ name: 'Get Current Time at Coords', value: 'getCurrentTimeAtCoords', description: 'Get current local time, sunrise and sunset for coordinates', action: 'Get current time at coords' },
 					{ name: 'Get Current Time at Place', value: 'getCurrentTimeAtPlace', description: 'Get current local time, sunrise and sunset for a place', action: 'Get current time at place' },
 					{ name: 'Get Later Time at Coords', value: 'getLaterTimeAtCoords', description: 'Get local time N hours from now for coordinates', action: 'Get later time at coords' },
 					{ name: 'Get Later Time at Place', value: 'getLaterTimeAtPlace', description: 'Get local time N hours from now for a place', action: 'Get later time at place' },
-					{ name: 'Get METARs (ICAO list)', value: 'getMetars', description: 'Get current METAR reports for airports by ICAO code', action: 'Get METARs ICAO list' },
-					{ name: 'Get TAFs (ICAO list)', value: 'getTafs', description: 'Get TAF forecasts for airports by ICAO code', action: 'Get TAFs ICAO list' },
-					{ name: 'Google Place Details', value: 'getGooglePlaceDetails', description: 'Get details for a place by place_id', action: 'Google place details' },
+					{ name: 'Get METARs (ICAO List)', value: 'getMetars', description: 'Get current METAR reports for airports by ICAO code', action: 'Get meta rs icao list' },
+					{ name: 'Get TAFs (ICAO List)', value: 'getTafs', description: 'Get TAF forecasts for airports by ICAO code', action: 'Get ta fs icao list' },
 					{ name: 'Google Nearest Places Search', value: 'nearestPlacesSearch', description: 'Find nearest objects within a radius of given coordinates', action: 'Google nearest places search' },
+					{ name: 'Google Place Details', value: 'getGooglePlaceDetails', description: 'Get details for a place by place_id', action: 'Google place details' },
 					{ name: 'Help', value: 'navigationHelp', description: 'Get help on the teckel Navigation toolbox', action: 'Help' },
-					{ name: 'METARs for Coords within Range', value: 'getMetarsForCoordsRange', description: 'Get METAR reports from all stations within range of coordinates', action: 'METARs for coords within range' },
-					{ name: 'METARs for Place within Range', value: 'getMetarsForPlaceRange', description: 'Get METAR reports from all stations within range of a place', action: 'METARs for place within range' },
-					{ name: 'Nav Bearing from Coords', value: 'navBearingFromCoords', description: 'Get endpoint coordinates at bearing and range from start coordinates', action: 'Nav bearing from coords' },
-					{ name: 'Nav Bearing from Place', value: 'navBearingFromPlace', description: 'Get endpoint coordinates at bearing and range from a place', action: 'Nav bearing from place' },
+					{ name: 'METARs for Coords Within Range', value: 'getMetarsForCoordsRange', description: 'Get METAR reports from all stations within range of coordinates', action: 'Meta rs for coords within range' },
+					{ name: 'METARs for Place Within Range', value: 'getMetarsForPlaceRange', description: 'Get METAR reports from all stations within range of a place', action: 'Meta rs for place within range' },
+					{ name: 'Nav Bearing From Coords', value: 'navBearingFromCoords', description: 'Get endpoint coordinates at bearing and range from start coordinates', action: 'Nav bearing from coords' },
+					{ name: 'Nav Bearing From Place', value: 'navBearingFromPlace', description: 'Get endpoint coordinates at bearing and range from a place', action: 'Nav bearing from place' },
 					{ name: 'Nav Bounding Box', value: 'getNavBoundingBox', description: 'Get corner coordinates of a bounding box centred on a location', action: 'Nav bounding box' },
-					{ name: 'Navaids within Range (Coords)', value: 'getNavaidsForCoordsRange', description: 'Get aviation navaids within range of coordinates (US only)', action: 'Navaids within range coords' },
+					{ name: 'Navaids Within Range (Coords)', value: 'getNavaidsForCoordsRange', description: 'Get aviation navaids within range of coordinates (US only)', action: 'Navaids within range coords' },
 					{ name: 'Nearest METAR for Coords', value: 'getNearestMetarForCoords', description: 'Get the nearest METAR for coordinates', action: 'Nearest METAR for coords' },
 					{ name: 'Nearest METAR for Place', value: 'getNearestMetarForPlace', description: 'Get the nearest METAR for a place', action: 'Nearest METAR for place' },
-					{ name: 'Obstacles within Range (Coords)', value: 'getObstaclesForCoordsRange', description: 'Get aviation obstacles within range of coordinates (US only)', action: 'Obstacles within range coords' },
+					{ name: 'Obstacles Within Range (Coords)', value: 'getObstaclesForCoordsRange', description: 'Get aviation obstacles within range of coordinates (US only)', action: 'Obstacles within range coords' },
 					{ name: 'Sun Calculations', value: 'sunCalculations', description: 'Get sun position, elevation and light conditions for a location and time', action: 'Sun calculations' },
 				],
 			},
@@ -137,7 +139,7 @@ export class TeckelNavigation implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: 'Any place name, address, postcode etc.',
+				description: 'Any place name, address, postcode etc',
 				displayOptions: { show: { operation: PLACE_OPS } },
 			},
 
@@ -173,7 +175,7 @@ export class TeckelNavigation implements INodeType {
 
 			// ── Hours later ──────────────────────────────────────────────────
 			{
-				displayName: 'Hours from Now',
+				displayName: 'Hours From Now',
 				name: 'hours_later',
 				type: 'string',
 				default: '',
@@ -234,7 +236,7 @@ export class TeckelNavigation implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: 'place_id returned from Google Nearest Places Search',
+				description: 'Place_id returned from Google Nearest Places Search',
 				displayOptions: { show: { operation: PLACE_ID_OPS } },
 			},
 
@@ -615,8 +617,6 @@ export class TeckelNavigation implements INodeType {
 
 		const credentials = await this.getCredentials('teckelNavigationApi');
 		const baseUrl = (credentials.baseUrl as string).replace(/\/$/, '');
-		const apiKey = credentials.apiKey as string;
-		const authHeader = { Authorization: `Bearer ${apiKey}` };
 
 		for (let i = 0; i < items.length; i++) {
 			try {
@@ -717,12 +717,15 @@ export class TeckelNavigation implements INodeType {
 					wp('intermediateWayPoint10');
 				}
 
-				const responseData = await this.helpers.httpRequest({
-					method: 'POST',
-					url: `${baseUrl}/${path}`,
-					headers: authHeader,
-					qs,
-				}) as IDataObject;
+				const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'teckelNavigationApi',
+					{
+						method: 'POST',
+						url: `${baseUrl}/${path}`,
+						qs,
+					},
+				)) as IDataObject;
 
 				returnData.push({ json: responseData, pairedItem: i });
 

@@ -3,6 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	NodeConnectionTypes,
 	NodeOperationError,
 	IDataObject,
 } from 'n8n-workflow';
@@ -63,8 +64,9 @@ export class TeckelEthereum implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Query the Ethereum blockchain via the teckel platform',
 		defaults: { name: 'teckel Ethereum' },
-		inputs: ['main'],
-		outputs: ['main'],
+		usableAsTool: true,
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'teckelEthereumApi', required: true }],
 		properties: [
 
@@ -184,8 +186,6 @@ export class TeckelEthereum implements INodeType {
 
 		const credentials = await this.getCredentials('teckelEthereumApi');
 		const baseUrl = (credentials.baseUrl as string).replace(/\/$/, '');
-		const apiKey = credentials.apiKey as string;
-		const authHeader = { Authorization: `Bearer ${apiKey}` };
 
 		for (let i = 0; i < items.length; i++) {
 			try {
@@ -215,12 +215,15 @@ export class TeckelEthereum implements INodeType {
 					qs.is_full = (this.getNodeParameter('is_full', i, false) as boolean) ? 'true' : 'false';
 				}
 
-				const responseData = await this.helpers.httpRequest({
-					method: 'POST',
-					url: `${baseUrl}${path}`,
-					headers: authHeader,
-					qs,
-				}) as IDataObject;
+				const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+					this,
+					'teckelEthereumApi',
+					{
+						method: 'POST',
+						url: `${baseUrl}${path}`,
+						qs,
+					},
+				)) as IDataObject;
 
 				returnData.push({ json: responseData, pairedItem: i });
 

@@ -61,6 +61,10 @@ jobs:
         working-directory: ${{ steps.pkg.outputs.name }}
         run: npm install --ignore-scripts
 
+      - name: Lint
+        working-directory: ${{ steps.pkg.outputs.name }}
+        run: ./node_modules/.bin/n8n-node lint
+
       - name: Build
         working-directory: ${{ steps.pkg.outputs.name }}
         run: npm run build

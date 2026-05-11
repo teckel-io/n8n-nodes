@@ -3,6 +3,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	NodeConnectionTypes,
 	NodeOperationError,
 	IDataObject,
 } from 'n8n-workflow';
@@ -28,8 +29,9 @@ export class TeckelIpfs implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Store, retrieve and manage files on IPFS via the teckel platform',
 		defaults: { name: 'teckel IPFS' },
-		inputs: ['main'],
-		outputs: ['main'],
+		usableAsTool: true,
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [{ name: 'teckelIpfsApi', required: true }],
 		properties: [
 
@@ -48,16 +50,16 @@ export class TeckelIpfs implements INodeType {
 						action: 'List files',
 					},
 					{
-						name: 'Pin Files',
-						value: 'pinFiles',
-						description: 'Pin IPFS files matching filters',
-						action: 'Pin files',
-					},
-					{
 						name: 'Pin by CID',
 						value: 'pinByCid',
 						description: 'Pin a single file by its CID',
 						action: 'Pin by CID',
+					},
+					{
+						name: 'Pin Files',
+						value: 'pinFiles',
+						description: 'Pin IPFS files matching filters',
+						action: 'Pin files',
 					},
 					{
 						name: 'Publish to Web',
@@ -218,8 +220,6 @@ export class TeckelIpfs implements INodeType {
 
 		const credentials = await this.getCredentials('teckelIpfsApi');
 		const baseUrl = (credentials.baseUrl as string).replace(/\/$/, '');
-		const apiKey = credentials.apiKey as string;
-		const authHeader = { Authorization: `Bearer ${apiKey}` };
 
 		for (let i = 0; i < items.length; i++) {
 			try {
@@ -233,12 +233,15 @@ export class TeckelIpfs implements INodeType {
 						encrypted_state: this.getNodeParameter('encrypted_state', i, 0) as number,
 						content_type: this.getNodeParameter('content_type', i, '') as string,
 					};
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}${FILTER_OP_PATHS[operation]}`,
-						headers: authHeader,
-						qs,
-					}) as IDataObject;
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}${FILTER_OP_PATHS[operation]}`,
+							qs,
+						},
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -246,12 +249,15 @@ export class TeckelIpfs implements INodeType {
 				// ── Pin by CID ───────────────────────────────────────────────
 				if (operation === 'pinByCid') {
 					const cid = this.getNodeParameter('cid', i) as string;
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/pin_ipfs_cid_for_apikey`,
-						headers: authHeader,
-						qs: { cid },
-					}) as IDataObject;
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/pin_ipfs_cid_for_apikey`,
+							qs: { cid },
+						},
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -259,12 +265,15 @@ export class TeckelIpfs implements INodeType {
 				// ── Remove by CID ────────────────────────────────────────────
 				if (operation === 'removeByCid') {
 					const cid = this.getNodeParameter('cid', i) as string;
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/remove_ipfs_cid_from_account`,
-						headers: authHeader,
-						qs: { cid },
-					}) as IDataObject;
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/remove_ipfs_cid_from_account`,
+							qs: { cid },
+						},
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -272,12 +281,15 @@ export class TeckelIpfs implements INodeType {
 				// ── Publish to Web ───────────────────────────────────────────
 				if (operation === 'publishToWeb') {
 					const cid = this.getNodeParameter('cid', i) as string;
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/publish_ipfs_file_to_webserver`,
-						headers: authHeader,
-						qs: { cid },
-					}) as IDataObject;
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/publish_ipfs_file_to_webserver`,
+							qs: { cid },
+						},
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -290,24 +302,27 @@ export class TeckelIpfs implements INodeType {
 					const nicknameOnIPFS = this.getNodeParameter('nicknameOnIPFS', i, '') as string;
 					const doEncryptOnIPFS = this.getNodeParameter('doEncryptOnIPFS', i, false) as boolean;
 
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/upload_sender_file_to_ipfs_for_apikey`,
-						headers: authHeader,
-						qs: {
-							nicknameOnIPFS,
-							doEncryptOnIPFS: doEncryptOnIPFS ? 'true' : 'false',
-						},
-						body: {
-							file: {
-								value: buffer,
-								options: {
-									filename: binaryData.fileName ?? 'upload',
-									contentType: binaryData.mimeType ?? 'application/octet-stream',
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/upload_sender_file_to_ipfs_for_apikey`,
+							qs: {
+								nicknameOnIPFS,
+								doEncryptOnIPFS: doEncryptOnIPFS ? 'true' : 'false',
+							},
+							body: {
+								file: {
+									value: buffer,
+									options: {
+										filename: binaryData.fileName ?? 'upload',
+										contentType: binaryData.mimeType ?? 'application/octet-stream',
+									},
 								},
 							},
 						},
-					}) as IDataObject;
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -317,16 +332,19 @@ export class TeckelIpfs implements INodeType {
 					const base64_data = this.getNodeParameter('base64_data', i) as string;
 					const nicknameOnIPFS = this.getNodeParameter('nicknameOnIPFS', i, '') as string;
 					const doEncryptOnIPFS = this.getNodeParameter('doEncryptOnIPFS', i, false) as boolean;
-					const responseData = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/upload_sender_base64_to_ipfs_for_apikey`,
-						headers: authHeader,
-						qs: {
-							base64_data,
-							nicknameOnIPFS,
-							doEncryptOnIPFS: doEncryptOnIPFS ? 'true' : 'false',
+					const responseData = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/upload_sender_base64_to_ipfs_for_apikey`,
+							qs: {
+								base64_data,
+								nicknameOnIPFS,
+								doEncryptOnIPFS: doEncryptOnIPFS ? 'true' : 'false',
+							},
 						},
-					}) as IDataObject;
+					)) as IDataObject;
 					returnData.push({ json: responseData, pairedItem: i });
 					continue;
 				}
@@ -336,14 +354,17 @@ export class TeckelIpfs implements INodeType {
 					const cid = this.getNodeParameter('cid', i) as string;
 					const outputField = this.getNodeParameter('outputBinaryPropertyName', i, 'data') as string;
 
-					const response = await this.helpers.httpRequest({
-						method: 'POST',
-						url: `${baseUrl}/retrieve_ipfs_file_for_apikey`,
-						headers: authHeader,
-						qs: { cid },
-						encoding: 'arraybuffer',
-						returnFullResponse: true,
-					}) as { body: ArrayBuffer; headers: Record<string, string> };
+					const response = (await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'teckelIpfsApi',
+						{
+							method: 'POST',
+							url: `${baseUrl}/retrieve_ipfs_file_for_apikey`,
+							qs: { cid },
+							encoding: 'arraybuffer',
+							returnFullResponse: true,
+						},
+					)) as { body: ArrayBuffer; headers: Record<string, string> };
 
 					const contentType = response.headers['content-type'] ?? 'application/octet-stream';
 					const binary = await this.helpers.prepareBinaryData(

@@ -12,6 +12,6 @@
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["credentials/**/*.ts", "nodes/**/*.ts"],
+  "include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "package.json"],
   "exclude": ["node_modules", "dist"]
 }

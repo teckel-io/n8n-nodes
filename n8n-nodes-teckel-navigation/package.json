@@ -13,7 +13,9 @@
     "airports"
   ],
   "license": "MIT",
-  "author": "teckel-io",
+  "author": {
+    "name": "teckel-io"
+  },
   "homepage": "https://github.com/teckel-io/n8n-nodes/tree/main/n8n-nodes-teckel-navigation#readme",
   "repository": {
     "type": "git",
@@ -30,10 +32,13 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-assets.js",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix"
   },
   "n8n": {
     "n8nNodesApiVersion": 1,
+    "strict": true,
     "credentials": [
       "dist/credentials/TeckelNavigationApi.credentials.js"
     ],
@@ -42,8 +47,11 @@
     ]
   },
   "devDependencies": {
+    "@n8n/node-cli": "*",
     "@types/node": "^18.0.0",
+    "eslint": "9.32.0",
     "n8n-workflow": "^1.0.0",
+    "prettier": "3.6.2",
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
