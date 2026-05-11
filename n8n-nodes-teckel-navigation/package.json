@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-teckel-navigation",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Aviation weather, flight routing, geocoding and navigation tools via the teckel platform.",
   "keywords": [
     "n8n-community-node-package",
