@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-teckel-navigation",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Aviation weather, flight routing, geocoding and navigation tools via the teckel platform.",
   "keywords": [
     "n8n-community-node-package",
@@ -14,7 +14,8 @@
   ],
   "license": "MIT",
   "author": {
-    "name": "teckel-io"
+    "name": "teckel-io",
+    "email": "tkllabs.io@gmail.com"
   },
   "homepage": "https://github.com/teckel-io/n8n-nodes/tree/main/n8n-nodes-teckel-navigation#readme",
   "repository": {

@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-teckel-ipfs",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Store, retrieve and pin encrypted files on IPFS via the teckel platform.",
   "keywords": [
     "n8n-community-node-package",
@@ -14,7 +14,8 @@
   ],
   "license": "MIT",
   "author": {
-    "name": "teckel-io"
+    "name": "teckel-io",
+    "email": "tkllabs.io@gmail.com"
   },
   "homepage": "https://github.com/teckel-io/n8n-nodes/tree/main/n8n-nodes-teckel-ipfs#readme",
   "repository": {

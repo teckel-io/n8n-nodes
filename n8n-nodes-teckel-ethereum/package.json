@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-teckel-ethereum",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Query the Ethereum blockchain (mainnet & Sepolia) via the teckel platform.",
   "keywords": [
     "n8n-community-node-package",
@@ -14,7 +14,8 @@
   ],
   "license": "MIT",
   "author": {
-    "name": "teckel-io"
+    "name": "teckel-io",
+    "email": "tkllabs.io@gmail.com"
   },
   "homepage": "https://github.com/teckel-io/n8n-nodes/tree/main/n8n-nodes-teckel-ethereum#readme",
   "repository": {
