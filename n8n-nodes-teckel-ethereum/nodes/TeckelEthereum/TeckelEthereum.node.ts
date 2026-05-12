@@ -3,6 +3,8 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
+	NodeApiError,
 	NodeConnectionTypes,
 	NodeOperationError,
 	IDataObject,
@@ -231,6 +233,13 @@ export class TeckelEthereum implements INodeType {
 				if (this.continueOnFail()) {
 					returnData.push({ json: { error: (error as Error).message }, pairedItem: i });
 					continue;
+				}
+				// HTTP errors from httpRequestWithAuthentication carry httpCode / response — surface those
+				// via NodeApiError so the n8n UI shows status, body and headers. Everything else is an
+				// operational error.
+				const err = error as { httpCode?: unknown; response?: unknown };
+				if (err.httpCode !== undefined || err.response !== undefined) {
+					throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
 				}
 				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
 			}
